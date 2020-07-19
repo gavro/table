@@ -259,13 +259,25 @@ export class TableConstructor {
     }
     let typeCoord;
 
-    if (this._activatedToolBar === this._horizontalToolBar) {
-      this._addRow();
-      typeCoord = 'y';
-    } else {
-      this._addColumn();
-      typeCoord = 'x';
+    if(event.detail.button == 'plus'){
+      if (this._activatedToolBar === this._horizontalToolBar) {
+        this._addRow();
+        typeCoord = 'y';
+      } else {
+        this._addColumn();
+        typeCoord = 'x';
+      }
     }
+    if(event.detail.button == 'minus'){
+      if (this._activatedToolBar === this._horizontalToolBar) {
+        this._removeRow();
+        typeCoord = 'y';
+      } else {
+        this._removeColumn();
+        typeCoord = 'x';
+      }
+    }
+
     /** If event has transmitted data (coords of mouse) */
     const detailHasData = isNaN(event.detail) && event.detail !== null;
 
@@ -373,7 +385,48 @@ export class TableConstructor {
   /**
    * @private
    *
-   * if "cntrl + Eneter" is pressed then create new line under current and focus it
+   * Removes row in table
+   */
+  _removeRow() {
+    const indicativeRow = this._hoveredCell.closest('TR');
+    let index = this._getHoveredSideOfContainer();
+
+    if (index === 1) {
+      index = indicativeRow.sectionRowIndex;
+      // if inserting after hovered cell
+      index = index + this._isBottomOrRight();
+    }
+
+    const removeRowIndex = this._hoveredCellSide === 'top'
+      && (!indicativeRow.sectionRowIndex || indicativeRow.sectionRowIndex === 0) ? 0 : index - 1;
+
+    this._table.removeRow(removeRowIndex);
+  }
+
+  /**
+   * @private
+   *
+   * Removes column in table
+   */
+  _removeColumn() {
+    let index = this._getHoveredSideOfContainer();
+
+    if (index === 1) {
+      index = this._hoveredCell.cellIndex;
+      // if inserting after hovered cell
+      index = index + this._isBottomOrRight();
+    }
+
+    const removeColumnIndex = this._hoveredCellSide === 'left'
+      && (typeof this._hoveredCell.cellIndex === 'undefined' || this._hoveredCell.cellIndex === 0) ? 0 : index - 1;
+
+    this._table.removeColumn(removeColumnIndex);
+  }
+
+  /**
+   * @private
+   *
+   * if "ctrl + Enter" is pressed then create new line under current and focus it
    * @param {KeyboardEvent} event
    */
   _containerEnterPressed(event) {

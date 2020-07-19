@@ -398,7 +398,7 @@ export class TableConstructor {
     }
 
     const removeRowIndex = this._hoveredCellSide === 'top'
-      && (!indicativeRow.sectionRowIndex || indicativeRow.sectionRowIndex === 0) ? 0 : index - 1;
+      && (!indicativeRow || !indicativeRow.sectionRowIndex || indicativeRow.sectionRowIndex === 0) ? 0 : index - 1;
 
     this._table.removeRow(removeRowIndex);
   }

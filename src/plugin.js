@@ -219,4 +219,21 @@ export default class TableBlock {
       this.table.wrapper.replaceWith(this.render());
     }
   }
+
+  /**
+   * Do not sanitize <br> while inline toolbar enabled
+   *
+   * @returns {object}
+   * @public
+   */
+  static get sanitize() {
+    return {
+      b: true,
+      a: {
+        href: true,
+      },
+      i: true,
+      br: {}
+    }
+  }
 }
